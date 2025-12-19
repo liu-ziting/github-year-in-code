@@ -41,7 +41,7 @@ const aiContent = ref<{ analysis: string; critique: string; tags: string[] }>({
 const isLoading = ref(false)
 
 // 使用 Cloudflare Workers 代理（不需要 API_KEY 了）
-const WORKERS_URL = 'https://icy-sunset-a2a6.liu11onepoint.workers.dev/'
+const WORKERS_URL = 'https://github-api-ai.lz-t.top/'
 
 // 开始分析
 const startAnalysis = async (username: string) => {
@@ -55,8 +55,14 @@ const startAnalysis = async (username: string) => {
   try {
     // 1. 获取用户信息
     const userRes = await fetch(`https://api.github.com/users/${username}`)
+    if (userRes.status === 403) {
+      throw "GitHub API 速率达到上限。请稍后再试，或连接 VPN 切换 IP。"
+    }
     const user = await userRes.json()
     if (user.message === "Not Found") throw "未找到该用户"
+    if (user.message && user.message.includes("rate limit")) {
+      throw "GitHub API 速率达到上限。请稍后再试。"
+    }
 
     // 切换到报告页
     currentPage.value = 'report'
@@ -66,8 +72,17 @@ const startAnalysis = async (username: string) => {
     let page = 1
     while (page <= 5) {
       const r = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&page=${page}`)
+      
+      if (r.status === 403) {
+        throw "GitHub API 速率达到上限。请稍后再试，或连接 VPN 切换 IP。"
+      }
+      
       const d = await r.json()
       if (!d || d.length === 0) break
+      if (d.message && d.message.includes("rate limit")) {
+        throw "GitHub API 速率达到上限。请稍后再试。"
+      }
+      
       repos = repos.concat(d)
       page++
     }

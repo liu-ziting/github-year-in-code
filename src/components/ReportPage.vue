@@ -158,7 +158,7 @@
             <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse ml-auto"></span>
           </div>
           
-          <div class="text-sm md:text-base leading-relaxed text-gray-200 min-h-[100px] bg-slate-900/30 rounded-2xl p-4 md:p-6 border border-indigo-500/20 shadow-inner">
+          <div class="text-sm md:text-base leading-relaxed text-gray-200 min-h-[60px] bg-slate-900/30 rounded-2xl p-4 md:p-6 border border-indigo-500/20 shadow-inner">
             <div class="italic whitespace-pre-wrap">
               <MarkdownText :text="aiContent.analysis || 'AI 正在解码技术序列...'" />
             </div>
