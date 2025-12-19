@@ -1,48 +1,105 @@
 <template>
-  <div class="text-center max-w-4xl animate__animated animate__fadeIn">
-    <div class="inline-block px-4 py-1 border border-purple-500/30 rounded-full text-purple-400 text-xs font-bold mb-6 tracking-widest uppercase">
+  <div class="min-h-[80vh] flex flex-col items-center justify-center text-center max-w-6xl mx-auto px-4 animate__animated animate__fadeIn">
+    <!-- 顶部徽章 -->
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-400 text-[10px] md:text-xs font-bold mb-8 tracking-[0.2em] uppercase backdrop-blur-sm">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+      </span>
       2025 年度总结报告器
     </div>
-    <h1 class="hero-title text-6xl md:text-8xl font-black mb-6 tracking-tighter leading-tight">
-      TRACE YOUR <br>
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-400 to-teal-400">CODE SOUL</span>
-    </h1>
-    <p class="text-gray-400 text-lg md:text-xl mb-10 max-w-2xl mx-auto px-4">
-      接入 <span class="text-white font-bold">Mimo AI</span> 视觉引擎，深度解析你的 GitHub 每一行 Commit，生成专属开发者数字名片。
-    </p>
 
-    <!-- 搜索区 -->
-    <div class="flex flex-col md:flex-row gap-4 justify-center items-center mb-16 w-full max-w-md mx-auto px-4">
-      <input 
-        type="text" 
-        v-model="username"
-        @keyup.enter="handleAnalysis"
-        placeholder="输入 GitHub 用户名" 
-        class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-6 py-4 outline-none transition-all input-focus"
-      >
-      <button 
-        @click="handleAnalysis"
-        :disabled="isLoading"
-        class="w-full md:w-auto whitespace-nowrap bg-white text-black font-black px-10 py-4 rounded-2xl hover:bg-teal-400 transition-all shadow-xl active:scale-95 disabled:opacity-50"
-      >
-        {{ isLoading ? '正在溯源中...' : '立即分析' }}
-      </button>
+    <!-- 主标题区 -->
+    <div class="relative mb-8">
+      <h1 class="hero-title text-4xl md:text-6xl font-black tracking-tighter leading-tight mb-6">
+        <span class="inline-block text-white/90">TRACE YOUR</span>
+        <span class="inline-block md:ml-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-400 to-teal-400">CODE SOUL</span>
+      </h1>
+      <p class="text-gray-400 text-xs md:text-base max-w-xl mx-auto font-medium leading-relaxed opacity-60">
+        深度解析你的 GitHub 每一行 Commit <br class="hidden md:block">
+        接入 <span class="text-white font-bold">Mimo AI</span> 视觉引擎，生成专属开发者数字名片
+      </p>
     </div>
-  </div>
 
-  <!-- 功能预览 -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl px-4 opacity-80">
-    <div class="glass p-6">
-      <div class="text-teal-400 font-bold mb-2">01. 基因测序</div>
-      <p class="text-sm text-gray-500">统计多达 100+ 仓库的语言构成，精准识别你的技术栈倾向。</p>
+    <!-- 搜索交互区 -->
+    <div class="w-full max-w-2xl mb-24 scale-110 md:scale-125 transition-transform duration-500">
+      <div class="relative group">
+        <div class="absolute -inset-1.5 bg-gradient-to-r from-purple-600 via-fuchsia-500 to-teal-600 rounded-[2rem] blur-xl opacity-30 group-focus-within:opacity-100 transition duration-500 animate-pulse"></div>
+        <div class="relative flex flex-col md:flex-row gap-3 bg-slate-950/80 p-2.5 rounded-[2rem] border-2 border-white/20 backdrop-blur-2xl shadow-[0_0_50px_-12px_rgba(168,85,247,0.4)]">
+          <div class="flex-1 flex items-center px-6 py-2">
+            <span class="text-gray-500 mr-3 text-xl">@</span>
+            <input 
+              type="text" 
+              v-model="username"
+              @keyup.enter="handleAnalysis"
+              placeholder="输入你的 GitHub ID" 
+              class="w-full bg-transparent border-none outline-none text-white text-lg placeholder:text-gray-600 font-medium"
+            >
+          </div>
+          <button 
+            @click="handleAnalysis"
+            :disabled="isLoading"
+            class="group relative overflow-hidden bg-white text-black font-black px-12 py-4 rounded-[1.5rem] transition-all active:scale-95 disabled:opacity-50"
+          >
+            <div class="relative z-10 flex items-center gap-2">
+              <span>{{ isLoading ? '溯源中...' : '立即分析' }}</span>
+              <span v-if="!isLoading" class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-r from-teal-400 to-purple-400 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+          </button>
+        </div>
+      </div>
+      <p class="mt-4 text-[10px] text-gray-500 font-mono tracking-widest uppercase opacity-50">
+        PRESS ENTER TO REVEAL YOUR GENE
+      </p>
     </div>
-    <div class="glass p-6">
-      <div class="text-purple-400 font-bold mb-2">02. 灵魂对谈</div>
-      <p class="text-sm text-gray-500">小米 Mimo AI 实时阅读你的数据，生成犀利且独特的个人评价。</p>
-    </div>
-    <div class="glass p-6">
-      <div class="text-pink-400 font-bold mb-2">03. 视觉导出</div>
-      <p class="text-sm text-gray-500">一键生成适配朋友圈、Twitter 的高保真海报，带热力图映射。</p>
+
+    <!-- 功能特性展示 - 重新设计的卡片 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left">
+      <!-- 基因测序 -->
+      <div class="group relative glass p-8 border border-white/5 hover:border-teal-500/30 transition-all duration-500">
+        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+          <span class="text-4xl font-black">01</span>
+        </div>
+        <div class="w-10 h-10 bg-teal-500/10 rounded-xl flex items-center justify-center mb-6 border border-teal-500/20">
+          <span class="text-xl">🧬</span>
+        </div>
+        <h3 class="text-white font-black text-lg mb-3 tracking-tight">基因测序</h3>
+        <p class="text-sm text-gray-500 leading-relaxed">
+          统计多达 100+ 仓库的语言构成，<br>
+          精准识别你的技术栈倾向与底层基因。
+        </p>
+      </div>
+
+      <!-- 灵魂对谈 -->
+      <div class="group relative glass p-8 border border-white/5 hover:border-purple-500/30 transition-all duration-500">
+        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+          <span class="text-4xl font-black">02</span>
+        </div>
+        <div class="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6 border border-purple-500/20">
+          <span class="text-xl">🧠</span>
+        </div>
+        <h3 class="text-white font-black text-lg mb-3 tracking-tight">灵魂对谈</h3>
+        <p class="text-sm text-gray-500 leading-relaxed">
+          Mimo AI 深度阅读你的代码灵魂，<br>
+          生成犀利且独特的赛博锐评。
+        </p>
+      </div>
+
+      <!-- 视觉导出 -->
+      <div class="group relative glass p-8 border border-white/5 hover:border-pink-500/30 transition-all duration-500">
+        <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+          <span class="text-4xl font-black">03</span>
+        </div>
+        <div class="w-10 h-10 bg-pink-500/10 rounded-xl flex items-center justify-center mb-6 border border-pink-500/20">
+          <span class="text-xl">🖼️</span>
+        </div>
+        <h3 class="text-white font-black text-lg mb-3 tracking-tight">视觉导出</h3>
+        <p class="text-sm text-gray-500 leading-relaxed">
+          生成适配全平台的数字名片，<br>
+          内置热力图映射与高保真海报导出。
+        </p>
+      </div>
     </div>
   </div>
 </template>

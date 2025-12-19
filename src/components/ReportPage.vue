@@ -15,12 +15,26 @@
     <div class="relative z-10">
     <!-- 头部 -->
     <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-10 text-center md:text-left">
-      <img 
-        :src="userData.avatar_url" 
-        crossorigin="anonymous"
-        class="w-24 h-24 rounded-3xl border-2 border-white/10 shadow-2xl"
-        alt="Avatar"
-      >
+      <div class="relative w-24 h-24 flex-shrink-0">
+        <!-- 加载中占位 -->
+        <div v-if="!avatarLoaded && !avatarError" class="absolute inset-0 bg-white/5 animate-pulse rounded-3xl border-2 border-white/10 flex items-center justify-center">
+          <span class="text-xs text-gray-500">...</span>
+        </div>
+        <!-- 错误占位 -->
+        <div v-if="avatarError" class="absolute inset-0 bg-slate-800 rounded-3xl border-2 border-white/10 flex items-center justify-center">
+          <span class="text-2xl">👤</span>
+        </div>
+        <img 
+          v-show="!avatarError"
+          :src="userData.avatar_url" 
+          crossorigin="anonymous"
+          class="w-24 h-24 rounded-3xl border-2 border-white/10 shadow-2xl transition-opacity duration-300"
+          :class="avatarLoaded ? 'opacity-100' : 'opacity-0'"
+          alt="Avatar"
+          @load="avatarLoaded = true"
+          @error="avatarError = true"
+        >
+      </div>
       <div class="flex-1">
         <h2 class="text-4xl font-black tracking-tighter">{{ userData.name || userData.login || '---' }}</h2>
         <p class="text-gray-400 text-sm mt-2 max-w-lg">{{ userData.bio || 'GitHub Data Specialist' }}</p>
@@ -44,12 +58,27 @@
       <!-- 热力图卡片 -->
       <div class="glass p-6 bg-slate-900/30">
         <p class="text-xs text-gray-400 font-bold mb-4 uppercase tracking-wider">{{ userData.totalContributions || 737 }} contributions in 2025</p>
-        <div class="chart-scroll">
+        <div class="chart-scroll relative min-h-[100px]">
+          <!-- 加载中占位 -->
+          <div v-if="!chartLoaded && !chartError" class="absolute inset-0 bg-white/5 animate-pulse rounded-xl flex items-center justify-center">
+            <div class="flex flex-col items-center gap-2">
+              <div class="w-8 h-8 border-2 border-teal-500/30 border-t-teal-500 rounded-full animate-spin"></div>
+              <span class="text-[10px] text-gray-500 font-mono">LOADING HEATMAP...</span>
+            </div>
+          </div>
+          <!-- 错误占位 -->
+          <div v-if="chartError" class="absolute inset-0 bg-red-900/10 rounded-xl flex items-center justify-center border border-red-500/20">
+            <span class="text-xs text-red-400/70 font-mono">HEATMAP LOAD FAILED</span>
+          </div>
           <img 
+            v-show="!chartError"
             :src="userData.heatmapUrl" 
             crossorigin="anonymous"
-            class="min-w-[600px] md:min-w-0 w-full filter saturate-[1.5] hue-rotate-[290deg] opacity-80"
+            class="min-w-[600px] md:min-w-0 w-full filter saturate-[1.5] hue-rotate-[290deg] transition-opacity duration-500"
+            :class="chartLoaded ? 'opacity-80' : 'opacity-0'"
             alt="GitHub Heatmap"
+            @load="chartLoaded = true"
+            @error="chartError = true"
           >
         </div>
       </div>
@@ -241,6 +270,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { UserData } from '../types'
 import MarkdownText from './MarkdownText.vue'
 
@@ -249,6 +279,11 @@ defineProps<{
   aiContent: { analysis: string; critique: string; tags: string[] }
   isLoading: boolean
 }>()
+
+const avatarLoaded = ref(false)
+const avatarError = ref(false)
+const chartLoaded = ref(false)
+const chartError = ref(false)
 
 defineEmits<{
   backToHome: []
