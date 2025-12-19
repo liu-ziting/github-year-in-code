@@ -124,6 +124,7 @@ import { ref } from 'vue'
 
 const emit = defineEmits<{
   startAnalysis: [username: string]
+  showError: [message: string]
 }>()
 
 const username = ref('')
@@ -131,7 +132,8 @@ const isLoading = ref(false)
 
 const handleAnalysis = () => {
   if (!username.value.trim()) {
-    alert('请输入有效的 GitHub 用户名')
+    // 通过 emit 让父组件显示 toast
+    emit('showError', '请输入有效的 GitHub 用户名')
     return
   }
   

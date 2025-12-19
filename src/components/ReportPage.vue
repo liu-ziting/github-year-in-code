@@ -182,7 +182,7 @@
 
       <!-- AI锐评区域 -->
       <div class="space-y-4">
-        <!-- 技术基因 -->
+        <!-- 技术栈年鉴 -->
         <div class="glass p-4 md:p-6 border-l-4 border-l-indigo-500">
           <div class="flex items-center gap-2 md:gap-3 mb-4">
             <span class="text-xl md:text-2xl">🧬</span>
@@ -200,13 +200,13 @@
           </div>
         </div>
 
-        <!-- 灵魂暴击 -->
+        <!-- 锐评报告 -->
         <div class="glass p-4 md:p-6 border-l-4 border-l-red-500">
           <div class="flex items-center gap-2 md:gap-3 mb-4">
             <span class="text-xl md:text-2xl">💀</span>
             <div>
               <h3 class="text-lg md:text-xl font-black text-red-400 uppercase tracking-wider">锐评报告</h3>
-              <p class="text-[9px] md:text-[10px] text-red-400/70 font-bold uppercase tracking-[0.2em]">CRITICAL_REVIEW</p>
+              <p class="text-[9px] md:text-[10px] text-red-400/70 font-bold uppercase tracking-[0.2em]">Critical Review</p>
             </div>
             <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse ml-auto"></span>
           </div>
@@ -218,7 +218,7 @@
           </div>
         </div>
 
-        <!-- 赛博标签 -->
+        <!-- 年度热词 -->
         <div class="glass p-4 md:p-6 border-l-4 border-l-teal-500">
           <div class="flex items-center gap-2 md:gap-3 mb-4">
             <span class="text-xl md:text-2xl">🏷️</span>

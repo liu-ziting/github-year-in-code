@@ -7,7 +7,10 @@
 
     <!-- 首页 -->
     <div v-if="currentPage === 'landing'" id="landingPage" class="min-h-screen flex flex-col items-center px-4 py-12 md:py-24">
-      <LandingPage @start-analysis="startAnalysis" />
+      <LandingPage 
+        @start-analysis="startAnalysis" 
+        @show-error="(msg) => showToast(msg, 'error')"
+      />
     </div>
 
     <!-- 报告页 -->
@@ -20,6 +23,14 @@
         @download-poster="downloadPoster" 
       />
     </div>
+
+    <!-- 弹窗通知 -->
+    <Toast 
+      :visible="toast.visible" 
+      :message="toast.message" 
+      :type="toast.type"
+      @close="toast.visible = false"
+    />
   </div>
 </template>
 
@@ -27,7 +38,8 @@
 import { ref, onMounted } from 'vue'
 import LandingPage from './components/LandingPage.vue'
 import ReportPage from './components/ReportPage.vue'
-import html2canvas from 'html2canvas'
+import Toast from './components/Toast.vue'
+import * as htmlToImage from 'html-to-image'
 import type { UserData, GitHubUser, GitHubRepo } from './types'
 
 // 响应式数据
@@ -40,13 +52,27 @@ const aiContent = ref<{ analysis: string; critique: string; tags: string[] }>({
 })
 const isLoading = ref(false)
 
+// Toast 状态
+const toast = ref({
+  visible: false,
+  message: '',
+  type: 'error' as 'error' | 'success'
+})
+
+const showToast = (message: string, type: 'error' | 'success' = 'error') => {
+  toast.value = { visible: true, message, type }
+  setTimeout(() => {
+    toast.value.visible = false
+  }, 4000)
+}
+
 // 使用 Cloudflare Workers 代理（不需要 API_KEY 了）
 const WORKERS_URL = 'https://github-api-ai.lz-t.top/'
 
 // 开始分析
 const startAnalysis = async (username: string) => {
   if (!username.trim()) {
-    alert('请输入有效的 GitHub 用户名')
+    showToast('请输入有效的 GitHub 用户名', 'error')
     return
   }
 
@@ -63,6 +89,9 @@ const startAnalysis = async (username: string) => {
     if (user.message && user.message.includes("rate limit")) {
       throw "GitHub API 速率达到上限。请稍后再试。"
     }
+
+    // 成功提示
+    showToast(`成功获取 ${username} 的数据`, 'success')
 
     // 切换到报告页
     currentPage.value = 'report'
@@ -166,7 +195,7 @@ const startAnalysis = async (username: string) => {
     typeWriter(analysis, critique, tags)
 
   } catch (err) {
-    alert('数据溯源失败：' + err)
+    showToast('数据溯源失败：' + err, 'error')
     backToHome()
   } finally {
     isLoading.value = false
@@ -177,16 +206,22 @@ const startAnalysis = async (username: string) => {
 const callMimoAI = async (type: 'analysis' | 'critique' | 'tags', data: { login: string; stars: number; lang: string; topRepo: string }) => {
   let prompt = ''
   if (type === 'analysis') {
-    prompt = `你是 GitHub 技术分析官。基于数据：用户名${data.login}, Star总计${data.stars}, 主修语言${data.lang}, 代表作${data.topRepo}。
-    请生成一份专业的个人技术画像和2026年技术趋势预测（约100字）。
-    
-    要求：
-    1. **禁止**以"用户 xxx 是一位..."、"该用户..."、"基于数据..."等废话开头。
-    2. 直接切入技术核心，分析其技术栈深度、代码风格及工程能力。
-    3. 语气要犀利、专业，像是一份绝密的人才评估报告。
-    4. 预测2026年他最可能深耕的技术方向。
-    
-    回复内容直接展示，不需要标题。`
+    prompt = `你是技术趋势分析专家。基于以下数据：
+
+- 用户身份：${data.login}
+- 技术影响力：${data.stars}
+- 核心开发语言：${data.lang}
+- 旗舰项目：${data.topRepo}
+
+请直接生成一份**2025年度技术总结报告**。要求如下：
+
+1.  用犀利、专业的语言直接剖析其技术栈选择、工程实践特点与项目贡献，避免使用“用户”、“该用户”等客套前缀。
+2.  重点突出其在过去一年表现出的技术偏好、代码质量与架构决策特点。
+3.  结尾用一句话预测其在2026年最可能爆发或转型的技术方向。
+4.  整篇分析需高度凝练，控制在100字以内，像一份机密的技术档案。
+
+例如：
+> 主力栈${data.lang}，擅长高Star项目架构。代码追求极致简洁，倾向工具链与开发者体验优化。2026年可能向AI工程化或边缘计算领域纵深切入。`
   } else if (type === 'critique') {
     prompt = `你是 GitHub 灵魂分析官。基于数据：用户名${data.login}, Star总计${data.stars}, 主修语言${data.lang}, 代表作${data.topRepo}。
     请生成一个让他破防的梗，要求极其毒舌但精准（约200字）。
@@ -270,61 +305,36 @@ const downloadPoster = async () => {
       })
     }))
 
-    // 2. 使用 html2canvas 捕获，通过 onclone 强制桌面端布局
-    const canvas = await html2canvas(captureArea, {
+    // 2. 使用 html-to-image 捕获
+    // html-to-image 会保留 backdrop-blur 和大部分现代 CSS
+    const dataUrl = await htmlToImage.toPng(captureArea, {
       backgroundColor: "#030712",
-      useCORS: true,
-      scale: 2,
-      logging: false,
-      width: 800, // 强制导出宽度为 800px，确保触发 md: 栅格
-      windowWidth: 1200, // 模拟大屏浏览器窗口
-      onclone: (clonedDoc) => {
-        const clonedArea = clonedDoc.getElementById('captureArea')
-        if (clonedArea) {
-          clonedArea.style.width = '800px'
-          clonedArea.style.padding = '40px'
-          clonedArea.style.borderRadius = '0px' // 导出图通常不需要外层圆角
-          
-          // 移除所有 backdrop-blur，因为 html2canvas 不支持，改为纯色背景
-          const glasses = clonedArea.querySelectorAll('.glass')
-          glasses.forEach(el => {
-            if (el instanceof HTMLElement) {
-              el.style.backdropFilter = 'none'
-              el.style.webkitBackdropFilter = 'none'
-              el.style.backgroundColor = 'rgba(15, 23, 42, 0.8)' // 更加深沉的背景
-            }
-          })
-
-          // 强制修正栅格系统：html2canvas 有时无法识别 md: 前缀
-          const grids = clonedArea.querySelectorAll('.grid')
-          grids.forEach(grid => {
-            if (grid instanceof HTMLElement) {
-              if (grid.classList.contains('md:grid-cols-4')) {
-                grid.style.display = 'grid'
-                grid.style.gridTemplateColumns = 'repeat(4, minmax(0, 1fr))'
-              } else if (grid.classList.contains('md:grid-cols-3')) {
-                grid.style.display = 'grid'
-                grid.style.gridTemplateColumns = 'repeat(3, minmax(0, 1fr))'
-              }
-            }
-          })
-        }
+      pixelRatio: 2,
+      skipAutoScale: true,
+      cacheBust: true,
+      style: {
+        borderRadius: '0',
+        margin: '0',
+        transform: 'none',
+        left: '0',
+        top: '0',
+        position: 'relative'
       }
     })
     
     // 3. 执行下载
     const link = document.createElement('a')
     link.download = `GitHub-Trace-2025-${userData.value.login || 'user'}.png`
-    link.href = canvas.toDataURL('image/png', 1.0)
+    link.href = dataUrl
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
     
   } catch (error) {
-    console.error('截图失败:', error)
-    alert('海报生成失败，请尝试在电脑端操作或直接截图分享。')
-  }
-}
+     console.error('截图失败:', error)
+     showToast('海报生成失败，请尝试在电脑端操作或直接截图分享。', 'error')
+   }
+ }
 
 // 加载外部CSS
 onMounted(() => {
