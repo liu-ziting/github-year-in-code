@@ -11,9 +11,10 @@ const props = defineProps<{
 
 // 简单的Markdown渲染函数
 const renderedText = computed(() => {
-  if (!props.text) return ''
+  const content = String(props.text || '')
+  if (!content) return ''
   
-  let html = props.text
+  let html = content
   
   // 处理加粗 **text** -> <strong>text</strong>
   html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')

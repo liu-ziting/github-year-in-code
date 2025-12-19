@@ -33,7 +33,11 @@ import type { UserData, GitHubUser, GitHubRepo } from './types'
 // 响应式数据
 const currentPage = ref<'landing' | 'report'>('landing')
 const userData = ref<Partial<UserData>>({})
-const aiContent = ref<{personality: string, prediction: string, tags: string[]}>({personality: '', prediction: '', tags: []})
+const aiContent = ref<{ analysis: string; critique: string; tags: string[] }>({
+  analysis: '',
+  critique: '',
+  tags: []
+})
 const isLoading = ref(false)
 
 // 使用 Cloudflare Workers 代理（不需要 API_KEY 了）
@@ -120,15 +124,31 @@ const startAnalysis = async (username: string) => {
     }
 
     // 5. 调用 Mimo AI
-    const aiResult = await callMimoAI({
-      login: user.login,
-      stars: totalStars,
-      lang: topLang,
-      topRepo: starRepo ? starRepo.name : 'N/A'
-    })
+    const [analysis, critique, tagsStr] = await Promise.all([
+      callMimoAI('analysis', {
+        login: user.login,
+        stars: totalStars,
+        lang: topLang,
+        topRepo: starRepo ? starRepo.name : 'N/A'
+      }),
+      callMimoAI('critique', {
+        login: user.login,
+        stars: totalStars,
+        lang: topLang,
+        topRepo: starRepo ? starRepo.name : 'N/A'
+      }),
+      callMimoAI('tags', {
+        login: user.login,
+        stars: totalStars,
+        lang: topLang,
+        topRepo: starRepo ? starRepo.name : 'N/A'
+      })
+    ])
+
+    const tags = tagsStr.replace(/[\[\]"]/g, '').split(/[,，\s]+/).filter(t => t.trim()).slice(0, 10)
 
     // 打字机效果
-    typeWriter(aiResult)
+    typeWriter(analysis, critique, tags)
 
   } catch (err) {
     alert('数据溯源失败：' + err)
@@ -139,30 +159,35 @@ const startAnalysis = async (username: string) => {
 }
 
 // 调用AI接口
-const callMimoAI = async (data: { login: string; stars: number; lang: string; topRepo: string }) => {
-  const prompt = `你是 GitHub 灵魂分析官。基于数据：用户名${data.login}, Star总计${data.stars}, 主修语言${data.lang}, 代表作${data.topRepo}。
-  请生成一份毒舌但专业的个人代码风格画像。
-  
-  请严格按照以下JSON格式返回，不要添加任何其他内容：
-  {
-    "personality": "技术性格倾向分析，支持**加粗**和换行",
-    "prediction": "2026年最可能掉进的坑，支持**加粗**和换行", 
-    "tags": ["标签1", "标签2", "标签3"]
+const callMimoAI = async (type: 'analysis' | 'critique' | 'tags', data: { login: string; stars: number; lang: string; topRepo: string }) => {
+  let prompt = ''
+  if (type === 'analysis') {
+    prompt = `你是 GitHub 技术分析官。基于数据：用户名${data.login}, Star总计${data.stars}, 主修语言${data.lang}, 代表作${data.topRepo}。
+    请生成一份专业的个人技术画像和2026年技术趋势预测（约100字）。
+    
+    要求：
+    1. **禁止**以"用户 xxx 是一位..."、"该用户..."、"基于数据..."等废话开头。
+    2. 直接切入技术核心，分析其技术栈深度、代码风格及工程能力。
+    3. 语气要犀利、专业，像是一份绝密的人才评估报告。
+    4. 预测2026年他最可能深耕的技术方向。
+    
+    回复内容直接展示，不需要标题。`
+  } else if (type === 'critique') {
+    prompt = `你是 GitHub 灵魂分析官。基于数据：用户名${data.login}, Star总计${data.stars}, 主修语言${data.lang}, 代表作${data.topRepo}。
+    请生成一个让他破防的梗，要求极其毒舌但精准（约200字）。
+    回复内容直接展示，不需要标题。`
+  } else {
+    prompt = `你是 GitHub 标签生成器。基于数据：用户名${data.login}, Star总计${data.stars}, 主修语言${data.lang}, 代表作${data.topRepo}。
+    请生成 5-10 个技术相关的幽默标签，用逗号分隔，不能重复。
+    回复内容直接展示标签，不需要标题。`
   }
-  
-  要求：
-  1. personality字段：分析他的技术性格倾向，要毒舌但专业，约80字，可以使用**文字**加粗重点
-  2. prediction字段：预测2026年他最可能掉进的坑，包含一个让他破防的梗，约70字，可以使用**文字**加粗
-  3. tags字段：根据分析总结3-8个标签，体现技术特点和性格，如["完美主义者","框架收集癖","深夜码农"]
-  4. 语言要犀利有趣，但保持专业水准
-  5. 必须返回有效的JSON格式`
-  
+
   try {
     // 使用 Workers 代理
     const response = await fetch(WORKERS_URL, {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json' 
+      headers: {
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         messages: [{ role: 'user', content: prompt }],
@@ -170,51 +195,32 @@ const callMimoAI = async (data: { login: string; stars: number; lang: string; to
       })
     })
     const resData = await response.json()
-    const content = resData.choices[0].message.content
-    
-    try {
-      // 尝试解析JSON
-      const aiAnalysis = JSON.parse(content)
-      return aiAnalysis
-    } catch (parseError) {
-      // 如果解析失败，返回默认格式
-      return {
-        personality: content.substring(0, 100) + "...",
-        prediction: "2026年最可能在AI大潮中迷失方向，成为那个还在**手写CSS**的古典程序员。",
-        tags: ["神秘开发者", "代码隐士", "技术探索者"]
-      }
-    }
+    return resData.choices[0].message.content || ''
   } catch (e) {
     console.error('AI调用失败:', e)
-    return {
-      personality: "AI 脑机连接异常，但在代码维度里，你已经是**不可忽视的奇点**。",
-      prediction: "2026年最可能掉进的坑就是过度依赖AI，忘记了**编程的本质乐趣**。",
-      tags: ["AI依赖症", "代码哲学家", "数字游民"]
-    }
+    return type === 'tags' ? "技术宅,代码人,探索者" : "AI 脑机连接异常，但在代码维度里，你已经是不可忽视的奇点。"
   }
 }
 
 // 打字机效果
-const typeWriter = (aiAnalysis: {personality: string, prediction: string, tags: string[]}) => {
-  aiContent.value = {personality: '', prediction: '', tags: aiAnalysis.tags || []}
+const typeWriter = (analysis: string, critique: string, tags: string[]) => {
+  aiContent.value = { analysis: '', critique: '', tags: tags }
   
-  // 先打personality
   let i = 0
-  const personalityTimer = setInterval(() => {
-    if (i < aiAnalysis.personality.length) {
-      aiContent.value.personality += aiAnalysis.personality.charAt(i)
+  const analysisTimer = setInterval(() => {
+    if (i < analysis.length) {
+      aiContent.value.analysis += analysis.charAt(i)
       i++
     } else {
-      clearInterval(personalityTimer)
+      clearInterval(analysisTimer)
       
-      // 然后打prediction
       let j = 0
-      const predictionTimer = setInterval(() => {
-        if (j < aiAnalysis.prediction.length) {
-          aiContent.value.prediction += aiAnalysis.prediction.charAt(j)
+      const critiqueTimer = setInterval(() => {
+        if (j < critique.length) {
+          aiContent.value.critique += critique.charAt(j)
           j++
         } else {
-          clearInterval(predictionTimer)
+          clearInterval(critiqueTimer)
         }
       }, 30)
     }
@@ -225,7 +231,7 @@ const typeWriter = (aiAnalysis: {personality: string, prediction: string, tags: 
 const backToHome = () => {
   currentPage.value = 'landing'
   userData.value = {}
-  aiContent.value = {personality: '', prediction: '', tags: []}
+  aiContent.value = { analysis: '', critique: '', tags: [] }
 }
 
 // 下载海报

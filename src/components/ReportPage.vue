@@ -147,61 +147,61 @@
 
       <!-- AI锐评区域 -->
       <div class="space-y-4">
-        <!-- 技术标签 -->
+        <!-- 技术基因 -->
         <div class="glass p-4 md:p-6 border-l-4 border-l-indigo-500">
           <div class="flex items-center gap-2 md:gap-3 mb-4">
-            <span class="text-xl md:text-2xl">🏷️</span>
+            <span class="text-xl md:text-2xl">🧬</span>
             <div>
-              <h3 class="text-lg md:text-xl font-black text-indigo-400 uppercase tracking-wider">技术标签</h3>
-              <p class="text-[9px] md:text-[10px] text-indigo-400/70 font-bold uppercase tracking-[0.2em]">Tech Tags</p>
+              <h3 class="text-lg md:text-xl font-black text-indigo-400 uppercase tracking-wider">技术基因</h3>
+              <p class="text-[9px] md:text-[10px] text-indigo-400/70 font-bold uppercase tracking-[0.2em]">Technical DNA</p>
             </div>
             <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse ml-auto"></span>
           </div>
           
+          <div class="text-sm md:text-base leading-relaxed text-gray-200 min-h-[100px] bg-slate-900/30 rounded-2xl p-4 md:p-6 border border-indigo-500/20 shadow-inner">
+            <div class="italic whitespace-pre-wrap">
+              <MarkdownText :text="aiContent.analysis || 'AI 正在解码技术序列...'" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 灵魂暴击 -->
+        <div class="glass p-4 md:p-6 border-l-4 border-l-red-500">
+          <div class="flex items-center gap-2 md:gap-3 mb-4">
+            <span class="text-xl md:text-2xl">💀</span>
+            <div>
+              <h3 class="text-lg md:text-xl font-black text-red-400 uppercase tracking-wider">灵魂暴击</h3>
+              <p class="text-[9px] md:text-[10px] text-red-400/70 font-bold uppercase tracking-[0.2em]">Soul Strike</p>
+            </div>
+            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse ml-auto"></span>
+          </div>
+          
+          <div class="text-sm md:text-base leading-relaxed text-gray-200 min-h-[60px] bg-slate-900/30 rounded-2xl p-4 md:p-6 border border-red-500/20 shadow-inner">
+            <div class="italic whitespace-pre-wrap font-bold text-red-300">
+              <MarkdownText :text="aiContent.critique || 'AI 正在蓄力攻击...'" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 赛博标签 -->
+        <div class="glass p-4 md:p-6 border-l-4 border-l-teal-500">
+          <div class="flex items-center gap-2 md:gap-3 mb-4">
+            <span class="text-xl md:text-2xl">🏷️</span>
+            <div>
+              <h3 class="text-lg md:text-xl font-black text-teal-400 uppercase tracking-wider">赛博标签</h3>
+              <p class="text-[9px] md:text-[10px] text-teal-400/70 font-bold uppercase tracking-[0.2em]">Cyber Tags</p>
+            </div>
+            <span class="w-2 h-2 bg-teal-500 rounded-full animate-pulse ml-auto"></span>
+          </div>
+          
           <div class="flex flex-wrap gap-2">
             <div v-for="tag in aiContent.tags" :key="tag" 
-                 class="px-3 py-1 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 rounded-full text-xs font-bold text-indigo-300 hover:scale-105 transition-transform">
+                 class="px-3 py-1 bg-gradient-to-r from-teal-500/20 to-indigo-500/20 border border-teal-500/30 rounded-full text-xs font-bold text-teal-300 hover:scale-105 transition-transform">
               {{ tag }}
             </div>
             <div v-if="!aiContent.tags || aiContent.tags.length === 0" 
                  class="px-3 py-1 bg-gray-500/20 border border-gray-500/30 rounded-full text-xs text-gray-400">
               标签生成中...
-            </div>
-          </div>
-        </div>
-
-        <!-- 技术性格分析 -->
-        <div class="glass p-4 md:p-6 border-l-4 border-l-purple-500">
-          <div class="flex items-center gap-2 md:gap-3 mb-4">
-            <span class="text-xl md:text-2xl">🧠</span>
-            <div>
-              <h3 class="text-lg md:text-xl font-black text-purple-400 uppercase tracking-wider">技术性格</h3>
-              <p class="text-[9px] md:text-[10px] text-purple-400/70 font-bold uppercase tracking-[0.2em]">Personality Analysis</p>
-            </div>
-            <span class="w-2 h-2 bg-purple-500 rounded-full animate-pulse ml-auto"></span>
-          </div>
-          
-          <div class="text-sm md:text-base leading-relaxed text-gray-200 min-h-[80px] bg-slate-900/30 rounded-2xl p-3 md:p-4 border border-purple-500/20">
-            <div class="italic">
-              <MarkdownText :text="aiContent.personality || 'AI 正在分析您的技术性格倾向...'" />
-            </div>
-          </div>
-        </div>
-
-        <!-- 2026预测 -->
-        <div class="glass p-4 md:p-6 border-l-4 border-l-red-500">
-          <div class="flex items-center gap-2 md:gap-3 mb-4">
-            <span class="text-xl md:text-2xl">🔥</span>
-            <div>
-              <h3 class="text-lg md:text-xl font-black text-red-400 uppercase tracking-wider">2026预测</h3>
-              <p class="text-[9px] md:text-[10px] text-red-400/70 font-bold uppercase tracking-[0.2em]">Future Prediction</p>
-            </div>
-            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse ml-auto"></span>
-          </div>
-          
-          <div class="text-sm md:text-base leading-relaxed text-gray-200 min-h-[80px] bg-slate-900/30 rounded-2xl p-3 md:p-4 border border-red-500/20">
-            <div class="italic">
-              <MarkdownText :text="aiContent.prediction || 'AI 正在预测您2026年可能掉进的坑...'" />
             </div>
           </div>
         </div>
@@ -246,7 +246,7 @@ import MarkdownText from './MarkdownText.vue'
 
 defineProps<{
   userData: Partial<UserData>
-  aiContent: {personality: string, prediction: string, tags: string[]}
+  aiContent: { analysis: string; critique: string; tags: string[] }
   isLoading: boolean
 }>()
 
