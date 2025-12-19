@@ -11,7 +11,7 @@
   </div>
 
   <!-- 截图区域 -->
-  <div id="captureArea" class="max-w-4xl mx-auto glass p-6 md:p-10 relative overflow-hidden">
+  <div id="captureArea" class="max-w-4xl mx-auto glass p-2 md:p-10 relative overflow-hidden">
     <!-- 截图专用背景 -->
     <div class="absolute inset-0 opacity-30 pointer-events-none">
       <div class="w-full h-full" style="background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px;"></div>
@@ -91,6 +91,27 @@
 
       <!-- 统计卡片网格 -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+        <!-- Total Stars -->
+        <div class="glass p-4 bg-gradient-to-br from-cyan-900/20 to-transparent">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-cyan-400">⭐</span>
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Stars</p>
+          </div>
+          <div class="text-2xl font-black text-cyan-400">{{ (userData.totalStars || 0).toLocaleString() }}</div>
+        </div>
+
+        
+
+        <!-- Top Language -->
+        <div class="glass p-4 bg-gradient-to-br from-blue-900/20 to-transparent">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-blue-400">🚀</span>
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Top Language</p>
+          </div>
+          <div class="text-2xl font-black text-blue-400">{{ userData.topLang || 'Vue' }}</div>
+        </div>
+
         <!-- Universal Rank -->
         <div class="glass p-4 bg-gradient-to-br from-orange-900/20 to-transparent">
           <div class="flex items-center gap-2 mb-2">
@@ -136,23 +157,6 @@
           <div class="text-2xl font-black text-yellow-400">{{ userData.mostActiveDay || 'Monday' }}</div>
         </div>
 
-        <!-- Total Stars -->
-        <div class="glass p-4 bg-gradient-to-br from-cyan-900/20 to-transparent">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-cyan-400">⭐</span>
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Stars</p>
-          </div>
-          <div class="text-2xl font-black text-cyan-400">{{ (userData.totalStars || 0).toLocaleString() }}</div>
-        </div>
-
-        <!-- Top Language -->
-        <div class="glass p-4 bg-gradient-to-br from-blue-900/20 to-transparent">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-blue-400">🚀</span>
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Top Language</p>
-          </div>
-          <div class="text-2xl font-black text-blue-400">{{ userData.topLang || 'Vue' }}</div>
-        </div>
 
         <!-- Power Level -->
         <div class="glass p-4 bg-gradient-to-br from-amber-900/20 to-transparent">
@@ -183,7 +187,7 @@
       <!-- AI锐评区域 -->
       <div class="space-y-4">
         <!-- 技术栈年鉴 -->
-        <div class="glass p-4 md:p-6 border-l-4 border-l-indigo-500">
+        <div class="glass p-2 md:p-6 border-l-4 border-l-indigo-500">
           <div class="flex items-center gap-2 md:gap-3 mb-4">
             <span class="text-xl md:text-2xl">🧬</span>
             <div>
@@ -241,28 +245,6 @@
           </div>
         </div>
 
-        <!-- AI分析底部装饰 -->
-        <div class="glass p-4 border border-white/10">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-4">
-              <div class="flex items-center gap-2 text-xs text-gray-500">
-                <span>毒舌指数</span>
-                <span class="text-red-400 font-bold">MAX</span>
-              </div>
-              <div class="flex items-center gap-2 text-xs text-gray-500">
-                <span>准确度</span>
-                <span class="text-teal-400 font-bold">98.7%</span>
-              </div>
-            </div>
-            <div class="text-xs text-gray-500 font-mono">
-              Powered by Xiaomi Mimo-v2
-            </div>
-          </div>
-          
-          <div class="w-full bg-gray-700 rounded-full h-1">
-            <div class="bg-gradient-to-r from-purple-500 via-red-500 to-orange-500 h-1 rounded-full animate-pulse" style="width: 100%"></div>
-          </div>
-        </div>
       </div>
     </div>
 
