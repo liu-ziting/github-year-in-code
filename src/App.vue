@@ -193,7 +193,7 @@ const callMimoAI = async (type: 'analysis' | 'critique' | 'tags', data: { login:
     回复内容直接展示，不需要标题。`
   } else {
     prompt = `你是 GitHub 标签生成器。基于数据：用户名${data.login}, Star总计${data.stars}, 主修语言${data.lang}, 代表作${data.topRepo}。
-    请生成 5-10 个技术相关的幽默标签，用逗号分隔，不能重复。
+    请生成 5-10 个年度热词、幽默标签，用逗号分隔，不能重复。
     回复内容直接展示标签，不需要标题。`
   }
 
@@ -255,113 +255,69 @@ const downloadPoster = async () => {
   if (!captureArea) return
 
   try {
-    // 临时显示更好的背景效果
-    const originalStyle = captureArea.style.cssText
-    captureArea.style.background = 'linear-gradient(135deg, #030712 0%, #0f172a 50%, #030712 100%)'
-    
-    // 预处理图片，确保它们不会污染canvas
+    // 1. 预处理：确保所有图片都已加载
     const images = captureArea.querySelectorAll('img')
-    const imagePromises = Array.from(images).map(async (img) => {
-      if (img.src.startsWith('http') && !img.src.includes(window.location.origin)) {
-        try {
-          // 创建一个新的图片元素
-          const newImg = new Image()
-          newImg.crossOrigin = 'anonymous'
-          
-          return new Promise((resolve, reject) => {
-            newImg.onload = () => {
-              // 创建canvas来转换图片
-              const canvas = document.createElement('canvas')
-              const ctx = canvas.getContext('2d')
-              canvas.width = newImg.width
-              canvas.height = newImg.height
-              ctx?.drawImage(newImg, 0, 0)
-              
-              try {
-                const dataURL = canvas.toDataURL('image/png')
-                img.src = dataURL
-                resolve(dataURL)
-              } catch (e) {
-                // 如果还是失败，就隐藏这个图片
-                img.style.display = 'none'
-                resolve(null)
-              }
-            }
-            newImg.onerror = () => {
-              img.style.display = 'none'
-              resolve(null)
-            }
-            newImg.src = img.src
-          })
-        } catch (e) {
-          img.style.display = 'none'
-          return null
-        }
-      }
-      return Promise.resolve(null)
-    })
+    await Promise.all(Array.from(images).map(img => {
+      if (img.complete) return Promise.resolve()
+      return new Promise(resolve => {
+        img.onload = resolve
+        img.onerror = resolve
+      })
+    }))
 
-    await Promise.all(imagePromises)
-    
-    // 等待一下让图片加载完成
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
+    // 2. 使用 html2canvas 捕获，通过 onclone 强制桌面端布局
     const canvas = await html2canvas(captureArea, {
       backgroundColor: "#030712",
       useCORS: true,
-      allowTaint: false,
       scale: 2,
-      scrollX: 0,
-      scrollY: 0,
-      width: captureArea.offsetWidth,
-      height: captureArea.offsetHeight,
       logging: false,
-      imageTimeout: 0,
+      width: 800, // 强制导出宽度为 800px，确保触发 md: 栅格
+      windowWidth: 1200, // 模拟大屏浏览器窗口
       onclone: (clonedDoc) => {
-        // 在克隆的文档中处理图片
-        const clonedImages = clonedDoc.querySelectorAll('img')
-        clonedImages.forEach(img => {
-          if (img.src.startsWith('http') && !img.src.includes(window.location.origin)) {
-            img.style.display = 'none'
-          }
-        })
+        const clonedArea = clonedDoc.getElementById('captureArea')
+        if (clonedArea) {
+          clonedArea.style.width = '800px'
+          clonedArea.style.padding = '40px'
+          clonedArea.style.borderRadius = '0px' // 导出图通常不需要外层圆角
+          
+          // 移除所有 backdrop-blur，因为 html2canvas 不支持，改为纯色背景
+          const glasses = clonedArea.querySelectorAll('.glass')
+          glasses.forEach(el => {
+            if (el instanceof HTMLElement) {
+              el.style.backdropFilter = 'none'
+              el.style.webkitBackdropFilter = 'none'
+              el.style.backgroundColor = 'rgba(15, 23, 42, 0.8)' // 更加深沉的背景
+            }
+          })
+
+          // 强制修正栅格系统：html2canvas 有时无法识别 md: 前缀
+          const grids = clonedArea.querySelectorAll('.grid')
+          grids.forEach(grid => {
+            if (grid instanceof HTMLElement) {
+              if (grid.classList.contains('md:grid-cols-4')) {
+                grid.style.display = 'grid'
+                grid.style.gridTemplateColumns = 'repeat(4, minmax(0, 1fr))'
+              } else if (grid.classList.contains('md:grid-cols-3')) {
+                grid.style.display = 'grid'
+                grid.style.gridTemplateColumns = 'repeat(3, minmax(0, 1fr))'
+              }
+            }
+          })
+        }
       }
     })
     
-    // 恢复原始样式
-    captureArea.style.cssText = originalStyle
-    images.forEach(img => {
-      img.style.display = ''
-    })
-    
+    // 3. 执行下载
     const link = document.createElement('a')
     link.download = `GitHub-Trace-2025-${userData.value.login || 'user'}.png`
     link.href = canvas.toDataURL('image/png', 1.0)
+    document.body.appendChild(link)
     link.click()
+    document.body.removeChild(link)
     
   } catch (error) {
     console.error('截图失败:', error)
-    
-    // 如果还是失败，尝试简化版本
-    try {
-      const canvas = await html2canvas(captureArea, {
-        backgroundColor: "#030712",
-        useCORS: false,
-        allowTaint: true,
-        scale: 1,
-        ignoreElements: (element) => {
-          return element.tagName === 'IMG' && (element as HTMLImageElement).src.startsWith('http') && !(element as HTMLImageElement).src.includes(window.location.origin)
-        }
-      })
-      
-      const link = document.createElement('a')
-      link.download = `GitHub-Trace-2025-${userData.value.login || 'user'}.png`
-      link.href = canvas.toDataURL('image/png', 1.0)
-      link.click()
-    } catch (fallbackError) {
-      console.error('备用截图也失败:', fallbackError)
-      alert('海报生成失败，可能是由于网络图片跨域问题。请稍后重试或联系开发者。')
-    }
+    alert('海报生成失败，请尝试在电脑端操作或直接截图分享。')
   }
 }
 

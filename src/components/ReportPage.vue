@@ -1,7 +1,13 @@
 <template>
   <div class="max-w-4xl mx-auto flex justify-between items-center mb-4 md:mb-6 px-2 md:px-0">
     <button @click="$emit('backToHome')" class="text-gray-500 text-sm hover:text-white">← 返回</button>
-    <!-- <button @click="$emit('downloadPoster')" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 md:px-6 py-2 rounded-full text-xs font-bold shadow-lg">下载海报</button> -->
+    <button 
+      @click="handleDownload" 
+      :disabled="isDownloading"
+      class="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 md:px-6 py-2 rounded-full text-xs font-bold shadow-lg disabled:opacity-50 transition-all active:scale-95"
+    >
+      {{ isDownloading ? '海报生成中...' : '保存海报' }}
+    </button>
   </div>
 
   <!-- 截图区域 -->
@@ -181,8 +187,8 @@
           <div class="flex items-center gap-2 md:gap-3 mb-4">
             <span class="text-xl md:text-2xl">🧬</span>
             <div>
-              <h3 class="text-lg md:text-xl font-black text-indigo-400 uppercase tracking-wider">技术基因</h3>
-              <p class="text-[9px] md:text-[10px] text-indigo-400/70 font-bold uppercase tracking-[0.2em]">Technical DNA</p>
+              <h3 class="text-lg md:text-xl font-black text-indigo-400 uppercase tracking-wider">技术栈年鉴</h3>
+              <p class="text-[9px] md:text-[10px] text-indigo-400/70 font-bold uppercase tracking-[0.2em]">Tech Stack Yearbook</p>
             </div>
             <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse ml-auto"></span>
           </div>
@@ -199,8 +205,8 @@
           <div class="flex items-center gap-2 md:gap-3 mb-4">
             <span class="text-xl md:text-2xl">💀</span>
             <div>
-              <h3 class="text-lg md:text-xl font-black text-red-400 uppercase tracking-wider">灵魂暴击</h3>
-              <p class="text-[9px] md:text-[10px] text-red-400/70 font-bold uppercase tracking-[0.2em]">Soul Strike</p>
+              <h3 class="text-lg md:text-xl font-black text-red-400 uppercase tracking-wider">锐评报告</h3>
+              <p class="text-[9px] md:text-[10px] text-red-400/70 font-bold uppercase tracking-[0.2em]">CRITICAL_REVIEW</p>
             </div>
             <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse ml-auto"></span>
           </div>
@@ -217,8 +223,8 @@
           <div class="flex items-center gap-2 md:gap-3 mb-4">
             <span class="text-xl md:text-2xl">🏷️</span>
             <div>
-              <h3 class="text-lg md:text-xl font-black text-teal-400 uppercase tracking-wider">赛博标签</h3>
-              <p class="text-[9px] md:text-[10px] text-teal-400/70 font-bold uppercase tracking-[0.2em]">Cyber Tags</p>
+              <h3 class="text-lg md:text-xl font-black text-teal-400 uppercase tracking-wider">年度热词</h3>
+              <p class="text-[9px] md:text-[10px] text-teal-400/70 font-bold uppercase tracking-[0.2em]">Trending Keywords</p>
             </div>
             <span class="w-2 h-2 bg-teal-500 rounded-full animate-pulse ml-auto"></span>
           </div>
@@ -284,9 +290,22 @@ const avatarLoaded = ref(false)
 const avatarError = ref(false)
 const chartLoaded = ref(false)
 const chartError = ref(false)
+const isDownloading = ref(false)
 
-defineEmits<{
+const emit = defineEmits<{
   backToHome: []
   downloadPoster: []
 }>()
+
+const handleDownload = async () => {
+  isDownloading.value = true
+  try {
+    await emit('downloadPoster')
+  } finally {
+    // 延迟恢复状态，给截图留出一点点时间
+    setTimeout(() => {
+      isDownloading.value = false
+    }, 1000)
+  }
+}
 </script>
