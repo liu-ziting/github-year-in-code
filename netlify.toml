@@ -1,0 +1,10 @@
+[[redirects]]
+  from = "/api/ghchart/*"
+  to = "https://ghchart.rshah.org/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
