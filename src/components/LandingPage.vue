@@ -12,8 +12,8 @@
     <!-- 主标题区 -->
     <div class="relative mb-8">
       <h1 class="hero-title text-4xl md:text-6xl font-black tracking-tighter leading-tight mb-6">
-        <span class="inline-block text-white/90">TRACE YOUR</span>
-        <span class="inline-block md:ml-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-400 to-teal-400">CODE SOUL</span>
+        <span class="inline-block text-white/90">GitHub 2025 </span>
+        <span class="inline-block md:ml-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-400 to-teal-400">Year in Code</span>
       </h1>
       <p class="text-gray-400 text-xs md:text-base max-w-xl mx-auto font-medium leading-relaxed opacity-60">
         深度解析你的 GitHub 每一行 Commit <br class="hidden md:block">
@@ -102,20 +102,6 @@
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="mt-24 pb-12 w-full border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center opacity-40 gap-4">
-      <div class="flex flex-col items-center md:items-start gap-1">
-        <p class="text-[10px] font-mono tracking-widest uppercase">© 2025 GitHub Trace Soul Analysis</p>
-        <a href="https://github.com/liu-ziting/" target="_blank" class="text-[10px] font-mono tracking-widest uppercase hover:text-white transition-colors border-b border-transparent hover:border-white/40">
-          Created by liu-ziting
-        </a>
-      </div>
-      <div class="flex items-center gap-6">
-        <a href="https://github.com/liu-ziting/" target="_blank" class="hover:opacity-100 transition-opacity">
-          <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" crossorigin="anonymous" class="w-5 h-5 invert" alt="GitHub">
-        </a>
-      </div>
-    </footer>
   </div>
 </template>
 

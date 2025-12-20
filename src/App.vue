@@ -11,6 +11,29 @@
         @start-analysis="startAnalysis" 
         @show-error="(msg) => showToast(msg, 'error')"
       />
+      
+      <!-- 关于项目入口 -->
+      <button 
+        @click="currentPage = 'about'"
+        class="mt-8 text-slate-500 hover:text-teal-400 transition-colors text-sm flex items-center gap-2 group"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        了解项目背景 & AI 机制
+      </button>
+
+      <footer class="text-center pt-12 text-slate-500 text-xs space-y-2">
+        <p>© GitHub 2025 Year in Code. Built with ❤️ for Developers.</p>
+        <p class="opacity-50 font-mono tracking-wider">
+          Powered by <span class="text-teal-400/80">Gemini-3-Flash</span> • <span class="text-purple-400/80">VibeCoding</span> Edition
+        </p>
+      </footer>
+    </div>
+
+    <!-- 关于页 -->
+    <div v-if="currentPage === 'about'" class="animate__animated animate__fadeIn">
+      <AboutPage @back="currentPage = 'landing'" />
     </div>
 
     <!-- 报告页 -->
@@ -38,12 +61,13 @@
 import { ref, onMounted } from 'vue'
 import LandingPage from './components/LandingPage.vue'
 import ReportPage from './components/ReportPage.vue'
+import AboutPage from './components/AboutPage.vue'
 import Toast from './components/Toast.vue'
 import * as htmlToImage from 'html-to-image'
 import type { UserData, GitHubUser, GitHubRepo } from './types'
 
 // 响应式数据
-const currentPage = ref<'landing' | 'report'>('landing')
+const currentPage = ref<'landing' | 'report' | 'about'>('landing')
 const userData = ref<Partial<UserData>>({})
 const aiContent = ref<{ analysis: string; critique: string; tags: string[] }>({
   analysis: '',
@@ -218,7 +242,7 @@ const callMimoAI = async (type: 'analysis' | 'critique' | 'tags', data: { login:
 1.  用犀利、专业的语言直接剖析其技术栈选择、工程实践特点与项目贡献，避免使用“用户”、“该用户”等客套前缀。
 2.  重点突出其在过去一年表现出的技术偏好、代码质量与架构决策特点。
 3.  结尾用一句话预测其在2026年最可能爆发或转型的技术方向。
-4.  整篇分析需高度凝练，控制在100字以内，像一份机密的技术档案。
+4.  整篇分析需高度凝练，控制在300字以内。
 
 例如：
 > 主力栈${data.lang}，擅长高Star项目架构。代码追求极致简洁，倾向工具链与开发者体验优化。2026年可能向AI工程化或边缘计算领域纵深切入。`
