@@ -27,7 +27,20 @@
 - **样式方案**: Tailwind CSS (移动端优先响应式设计)
 - **截图引擎**: `html-to-image` (现代 SVG 渲染方案，完美支持 CSS 高级特性)
 - **AI 代理**: 通过 Cloudflare Workers 代理调用的 Mimo AI API
-- **动画效果**: Animate.css + Tailwind Arbitrary Values
+
+## 🛡️ 安全与隐私
+
+### 1. Cloudflare Workers 中转机制
+为了保护 AI 接口密钥（API Key）不暴露在前端代码中，本项目采用 **Cloudflare Workers** 作为中间件：
+- **密钥隐藏**：AI 服务的 API Key 安全地存储在 Worker 环境变量中，前端仅与加密后的 Worker 地址通信。
+- **高可用设计**：Worker 内部集成了“主备自动切换”逻辑。当主接口（如小米 Mimo-v2）触发频率限制（HTTP 429）时，会自动无感切换至备用接口（如智谱 GLM-4），确保分析流程不中断。
+- **CORS 保护**：通过 Worker 统一处理跨域请求，并可根据需要配置域名白名单。
+
+### 2. GitHub Token 安全
+- **内存存储**：用户输入的 GitHub Token 仅存储在浏览器的运行时内存中，不会持久化到 LocalStorage 或 Cookie。
+- **直连 GitHub**：所有涉及 GitHub 数据（REST/GraphQL）的请求均由浏览器直连 GitHub 官方服务器，不经过任何第三方中转。
+
+## 📦 项目结构**动画效果**: Animate.css + Tailwind Arbitrary Values
 
 ## 🚀 快速开始
 
