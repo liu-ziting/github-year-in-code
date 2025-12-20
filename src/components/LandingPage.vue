@@ -16,7 +16,7 @@
         <span class="inline-block md:ml-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-400 to-teal-400">Year in Code</span>
       </h1>
       <p class="text-gray-400 text-xs md:text-base max-w-xl mx-auto font-medium leading-relaxed opacity-60">
-        深度解析你的 GitHub 每一行 Commit <br class="hidden md:block">
+        深度解析你的 GitHub 仓库与技术栈 <br class="hidden md:block">
         接入 <span class="text-white font-bold">Mimo AI</span> 大模型，生成专属开发者数字名片
       </p>
     </div>

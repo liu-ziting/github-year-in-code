@@ -1,6 +1,6 @@
 # 🌌 GitHub Trace Soul - 2025 年度技术溯源
 
-> **Trace Your Code Soul.** 深度解析 GitHub 每一行 Commit，接入 Mimo AI 大模型，生成专属开发者的赛博灵魂名片。
+> **Trace Your Code Soul.** 深度解析 GitHub 仓库与技术栈，接入 Mimo AI 大模型，生成专属开发者的赛博灵魂名片。
 
 [![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?logo=vite)](https://vitejs.dev/)
 [![Vue](https://img.shields.io/badge/Vue-3.x-4FC08D?logo=vue.js)](https://vuejs.org/)
