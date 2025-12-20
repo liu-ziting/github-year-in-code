@@ -5,7 +5,7 @@
       <div class="glass p-4 border-l-4 shadow-2xl flex items-center gap-4 bg-slate-900/90 backdrop-blur-xl"
            :class="type === 'error' ? 'border-l-red-500' : 'border-l-teal-500'">
         <div class="text-2xl">
-          {{ type === 'error' ? '🚫' : '✅' }}
+          {{ type === 'error' ? '🚫' : '' }}
         </div>
         <div class="flex-1">
           <p class="text-sm font-bold text-white leading-tight">{{ message }}</p>
