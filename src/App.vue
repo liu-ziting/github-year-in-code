@@ -145,15 +145,20 @@ const startAnalysis = async (username: string) => {
     const langMap: Record<string, number> = {}
     repos.forEach(r => r.language && (langMap[r.language] = (langMap[r.language] || 0) + 1))
     const topLang = Object.keys(langMap).sort((a,b) => (langMap[b] || 0) - (langMap[a] || 0))[0] || 'Unknown'
-    const starRepo = repos.sort((a,b) => b.stargazers_count - a.stargazers_count)[0] || null
+    const starRepo = [...repos].sort((a,b) => b.stargazers_count - a.stargazers_count)[0] || null
+    const collaborationRepo = [...repos].sort((a,b) => b.forks_count - a.forks_count)[0] || null
 
     // 计算额外统计数据
     const totalContributions = Math.floor(300 + Math.random() * 500) // 模拟贡献数
     const longestStreak = Math.floor(5 + Math.random() * 25) // 模拟最长连击
-    const mostActiveMonth = ['January', 'February', 'March', 'April', 'May', 'June', 
-                           'July', 'August', 'September', 'October', 'November', 'December'][Math.floor(Math.random() * 12)]
+    const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+    const mostActiveMonth = months[Math.floor(Math.random() * 12)]
     const mostActiveDay = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][Math.floor(Math.random() * 7)]
     
+    // 高产项目模拟
+    const highCommitRepo = repos.length > 0 ? repos[Math.floor(Math.random() * repos.length)] : null
+    const highCommitCount = Math.floor(totalContributions * (0.3 + Math.random() * 0.4))
+
     // 头衔判断
     let rank = "技术流浪者"
     if(totalStars > 500) rank = "恒星架构师"
@@ -188,7 +193,13 @@ const startAnalysis = async (username: string) => {
       mostActiveMonth,
       mostActiveDay,
       reportId: Math.floor(1000 + Math.random() * 9000),
-      heatmapUrl: `/api/ghchart/8b5cf6/${username}`
+      heatmapUrl: `/api/ghchart/8b5cf6/${username}`,
+      starRepoName: starRepo?.name || 'N/A',
+      starRepoStars: starRepo?.stargazers_count || 0,
+      highCommitRepoName: highCommitRepo?.name || 'N/A',
+      highCommitRepoCount: highCommitCount,
+      highContributorRepoName: collaborationRepo?.name || 'N/A',
+      highContributorRepoCount: (collaborationRepo?.forks_count || 0) + Math.floor(Math.random() * 10),
     }
 
     // 5. 调用 Mimo AI

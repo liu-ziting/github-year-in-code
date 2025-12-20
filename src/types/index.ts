@@ -31,6 +31,12 @@ export interface UserData extends GitHubUser {
   mostActiveDay: string
   reportId: number
   heatmapUrl: string
+  starRepoName?: string
+  starRepoStars?: number
+  highCommitRepoName?: string
+  highCommitRepoCount?: number
+  highContributorRepoName?: string
+  highContributorRepoCount?: number
 }
 
 export interface AIResponse {

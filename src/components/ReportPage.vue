@@ -145,7 +145,7 @@
             <span class="text-pink-400">📅</span>
             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Most Active Month</p>
           </div>
-          <div class="text-2xl font-black text-pink-400">{{ userData.mostActiveMonth || 'February' }}</div>
+          <div class="text-2xl font-black text-pink-400">{{ userData.mostActiveMonth || '1月' }}</div>
         </div>
 
         <!-- Most Active Day -->
@@ -165,6 +165,51 @@
             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Power Level</p>
           </div>
           <div class="text-2xl font-black text-amber-400">{{ userData.powerLevel || 'Ninja' }}</div>
+        </div>
+      </div>
+
+      <!-- 2025 GitHub 之最 -->
+      <div class="glass p-4 md:p-6 bg-slate-900/30 border border-white/5">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="text-xl md:text-2xl">🏆</span>
+          <div>
+            <h3 class="text-lg md:text-xl font-black text-white uppercase tracking-wider">你的2025编程高光时刻</h3>
+            <p class="text-[9px] md:text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">Your 2025 GitHub Bests</p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-xl">🌟</span>
+            <div>
+              <p class="text-[10px] text-gray-400 font-bold uppercase">明星项目</p>
+              <p class="text-sm font-bold text-white">{{ userData.starRepoName || 'N/A' }} <span class="text-xs font-normal text-gray-500">- 获得了 {{ userData.starRepoStars || 0 }} 颗 Star！</span></p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-xl">💻</span>
+            <div>
+              <p class="text-[10px] text-gray-400 font-bold uppercase">高产代码</p>
+              <p class="text-sm font-bold text-white">{{ userData.highCommitRepoName || 'N/A' }} <span class="text-xs font-normal text-gray-500">- 全年贡献了 {{ userData.highCommitRepoCount || 0 }} 次提交！</span></p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-xl">🤝</span>
+            <div>
+              <p class="text-[10px] text-gray-400 font-bold uppercase">协作之星</p>
+              <p class="text-sm font-bold text-white">{{ userData.highContributorRepoName || 'N/A' }} <span class="text-xs font-normal text-gray-500">- 吸引了 {{ userData.highContributorRepoCount || 0 }} 位贡献者！</span></p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5">
+            <span class="text-xl">📅</span>
+            <div>
+              <p class="text-[10px] text-gray-400 font-bold uppercase">高光时刻</p>
+              <p class="text-sm font-bold text-white">{{ userData.mostActiveMonth || '1月' }} <span class="text-xs font-normal text-gray-500">- 是你最活跃的月份！</span></p>
+            </div>
+          </div>
         </div>
       </div>
 
