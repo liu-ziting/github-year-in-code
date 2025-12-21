@@ -11,19 +11,9 @@
         :is-loading="isLoading"
         @start-analysis="startAnalysis" 
         @show-error="(msg) => showToast(msg, 'error')"
+        @show-about="currentPage = 'about'"
       />
       
-      <!-- 关于项目入口 -->
-      <button 
-        @click="currentPage = 'about'"
-        class="mt-8 text-slate-500 hover:text-teal-400 transition-colors text-sm flex items-center gap-2 group"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        了解项目背景 & AI 机制
-      </button>
-
       <footer class="text-center pt-12 text-slate-500 text-xs space-y-2">
         <p>© GitHub 2025 Year in Code. Built with ❤️ for Developers.</p>
         <p class="opacity-50 font-mono tracking-wider flex items-center justify-center gap-2">
@@ -96,6 +86,7 @@ const showToast = (message: string, type: 'error' | 'success' = 'error') => {
 
 // 开始分析
 const startAnalysis = async (username: string) => {
+  if (isLoading.value) return;
   if (!username.trim()) {
     showToast('请输入有效的 GitHub 用户名', 'error')
     return

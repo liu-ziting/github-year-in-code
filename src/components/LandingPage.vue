@@ -50,34 +50,17 @@
         </div>
       </div>
 
-      <!-- 高级分析选项 (Token) -->
-      <div class="mt-6 flex flex-col items-center">
+      <!-- 关于项目入口 -->
+      <div class="mt-8 flex flex-col items-center">
         <button 
-          @click="showTokenInput = !showTokenInput"
-          class="text-[10px] text-gray-500 hover:text-purple-400 transition-colors flex items-center gap-1 uppercase tracking-widest font-bold"
+          @click="$emit('showAbout')"
+          class="text-[11px] text-gray-500 hover:text-teal-400 transition-all flex items-center gap-2 uppercase tracking-[0.2em] font-bold group bg-white/5 px-4 py-2 rounded-full border border-white/10 hover:border-teal-500/30"
         >
-          <span>{{ showTokenInput ? '隐藏高级选项' : '解锁深度数据 (GraphQL)' }}</span>
-          <span :class="showTokenInput ? 'rotate-180' : ''" class="transition-transform">↓</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          了解项目背景 & AI 机制
         </button>
-        
-        <div v-if="showTokenInput" class="mt-4 w-full max-w-md animate__animated animate__fadeInUp animate__faster">
-          <div class="glass p-4 border border-white/10 bg-white/5 rounded-2xl">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="text-xs text-purple-400">🔑</span>
-              <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">GitHub Personal Access Token</span>
-            </div>
-            <input 
-              type="password" 
-              v-model="token"
-              placeholder="ghp_xxxxxxxxxxxx" 
-              class="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder:text-gray-600 outline-none focus:border-purple-500/50 transition-all"
-            >
-            <p class="mt-2 text-[9px] text-gray-500 leading-relaxed">
-              * 仅需勾选 <code class="text-purple-400/80">read:user</code> 权限。Token 仅在本地使用，绝不上传至任何服务器。
-              <a href="https://github.com/settings/tokens/new?description=GitHub%20Trace%20Soul&scopes=read:user" target="_blank" class="text-teal-500 hover:underline ml-1">去生成 →</a>
-            </p>
-          </div>
-        </div>
       </div>
 
       <p class="mt-4 text-[10px] text-gray-500 font-mono tracking-widest uppercase opacity-50">
@@ -144,13 +127,12 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  startAnalysis: [username: string, token?: string]
+  startAnalysis: [username: string]
   showError: [message: string]
+  showAbout: []
 }>()
 
 const username = ref('')
-const token = ref('')
-const showTokenInput = ref(false)
 
 const handleAnalysis = () => {
   if (props.isLoading) return
@@ -160,6 +142,6 @@ const handleAnalysis = () => {
     return
   }
   
-  emit('startAnalysis', username.value.trim(), token.value.trim() || undefined)
+  emit('startAnalysis', username.value.trim())
 }
 </script>

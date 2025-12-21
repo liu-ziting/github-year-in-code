@@ -41,10 +41,10 @@ defineEmits<{
         </div>
 
         <div class="grid md:grid-cols-2 gap-6">
-          <!-- AI Model Section -->
+          <!-- AI Model & Edge Proxy Section -->
           <div class="glass p-8 rounded-3xl border border-slate-800 bg-slate-900/50">
             <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
-              <span class="text-purple-400">🧠</span> AI 大模型支持
+              <span class="text-purple-400">🧠</span> AI 模型与调度网关
             </h2>
             <ul class="space-y-4 text-sm">
               <li class="flex items-start gap-3">
@@ -61,48 +61,70 @@ defineEmits<{
                   <p class="text-slate-400 mt-1">作为高可靠性的备份方案，确保在高并发期间服务依然稳定。</p>
                 </div>
               </li>
+              <li class="flex items-start gap-3">
+                <div class="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5"></div>
+                <div>
+                  <strong class="text-slate-100">AI 调度网关 (Edge Proxy)</strong>
+                  <p class="text-slate-400 mt-1">
+                    基于 Cloudflare Workers 部署的边缘调度层，实时监控模型可用性并进行智能流量分发与 Fallback。
+                  </p>
+                </div>
+              </li>
             </ul>
           </div>
 
-          <!-- Request & Proxy Mechanism Section -->
+          <!-- How to get GitHub ID Section -->
           <div class="glass p-8 rounded-3xl border border-slate-800 bg-slate-900/50">
             <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
-              <span class="text-amber-400">🛡️</span> 请求与代理机制
+              <span class="text-amber-400">🔍</span> 如何获取 GitHub ID？
             </h2>
-            <div class="space-y-6">
-              <div>
-                <h3 class="text-sm font-bold text-slate-100 mb-2 flex items-center gap-2">
-                  <span class="w-1 h-1 rounded-full bg-blue-400"></span>
-                  GitHub 数据获取 (Client-side)
-                </h3>
-                <p class="text-xs leading-relaxed text-slate-400">
-                  为保护隐私，所有 GitHub 公开数据的抓取均在您的浏览器端直接完成。由于 GitHub 对匿名 API 请求有严格的速率限制（通常为 <code class="text-amber-400/80">60次/小时/IP</code>），若短时间内查询频繁，可能会触发 403 错误。
-                </p>
-                <div class="mt-2 flex gap-2">
-                  <span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">方案：切换 VPN 节点或稍后再试</span>
+            <div class="space-y-4">
+              <p class="text-sm text-slate-300">
+                在首页搜索框中，您需要输入的是您的 GitHub 用户名（ID），而不是完整的个人主页链接。
+              </p>
+              <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800">
+                <p class="text-xs text-slate-500 mb-2 font-mono">例如您的个人主页是：</p>
+                <div class="text-sm font-mono break-all">
+                  <span class="text-slate-400">https://github.com/</span><span class="text-amber-400 font-bold underline decoration-amber-500/50 underline-offset-4">liu-ziting</span><span class="text-slate-400">/</span>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-[10px] text-amber-500/80 font-bold tracking-wider">
+                  <span class="flex h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                  输入内容即为：liu-ziting
                 </div>
               </div>
+              <p class="text-[10px] text-slate-500 italic leading-relaxed">
+                * 提示：用户名通常显示在 GitHub 个人主页头像下方，或出现在主页 URL 的末尾。
+              </p>
+            </div>
+          </div>
+        </div>
 
-              <div>
-                <h3 class="text-sm font-bold text-slate-100 mb-2 flex items-center gap-2">
-                  <span class="w-1 h-1 rounded-full bg-teal-400"></span>
-                  AI 调度网关 (Edge Proxy)
-                </h3>
-                <p class="text-xs leading-relaxed text-slate-400 mb-3">
-                  AI 分析请求通过 Cloudflare Workers 边缘网关进行智能调度，以确保高可用性：
-                </p>
-                <div class="bg-slate-950/50 p-4 rounded-xl font-mono text-xs border border-slate-800 text-teal-300">
-                  <div class="flex items-center gap-2 mb-1">
-                    <span class="text-slate-500">1.</span> 优先尝试 Xiaomi Mimo 接口
-                  </div>
-                  <div class="flex items-center gap-2 mb-1">
-                    <span class="text-slate-500">2.</span> 若遇到 429 (频率限制)
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-slate-500">3.</span> 自动 fallback 至智谱 AI
-                  </div>
-                </div>
-              </div>
+        <!-- Request Mechanism Section (Full Width) -->
+        <div class="glass p-8 rounded-3xl border border-slate-800 bg-slate-900/50">
+          <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+            <span class="text-blue-400">🛡️</span> 请求与频率限制
+          </h2>
+          <p class="text-sm leading-relaxed text-slate-300 mb-4">
+            为保护隐私，所有 GitHub 公开数据的抓取均在您的浏览器端直接完成。
+          </p>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-slate-950/30 p-4 rounded-xl border border-slate-800/50">
+              <h3 class="text-sm font-bold text-slate-100 mb-2 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                速率限制 (Rate Limit)
+              </h3>
+              <p class="text-xs leading-relaxed text-slate-400">
+                由于 GitHub 对匿名 API 请求有严格的速率限制（通常为 <code class="text-amber-400/80">60次/小时/IP</code>），若短时间内查询频繁，可能会触发 403 错误。
+              </p>
+            </div>
+            <div class="bg-slate-950/30 p-4 rounded-xl border border-slate-800/50">
+              <h3 class="text-sm font-bold text-slate-100 mb-2 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+                解决方案
+              </h3>
+              <p class="text-xs leading-relaxed text-slate-400">
+                如果您遇到速率限制错误，建议切换 VPN 节点（更改出口 IP）或等待一段时间后再试。本工具绝不存储您的任何个人 Token。
+              </p>
             </div>
           </div>
         </div>
