@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import dsImage from '../assets/ds.png'
 
 defineEmits<{
   back: []
 }>()
+
+const showDonation = ref(false)
 </script>
 
 <template>
@@ -131,56 +134,92 @@ defineEmits<{
       </section>
 
       <!-- Connect & Support -->
-      <section class="glass p-8 md:p-16 rounded-[3rem] border border-slate-800 bg-slate-900/40 relative overflow-hidden">
-        <div class="absolute -top-24 -right-24 w-96 h-96 bg-teal-500/10 blur-[120px] rounded-full"></div>
-        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-500/10 blur-[120px] rounded-full"></div>
+      <section class="glass p-8 md:p-12 rounded-[2.5rem] border border-slate-800 bg-slate-900/40 relative overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-64 h-64 bg-teal-500/5 blur-[100px] rounded-full"></div>
+        <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-purple-500/5 blur-[100px] rounded-full"></div>
 
-        <div class="relative z-10 space-y-12">
-          <div class="text-center max-w-2xl mx-auto space-y-4">
-            <h2 class="text-4xl font-black bg-gradient-to-r from-teal-400 via-white to-purple-400 bg-clip-text text-transparent">
+        <div class="relative z-10 flex flex-col items-center gap-10">
+          <div class="text-center space-y-2">
+            <h2 class="text-2xl font-black bg-gradient-to-r from-teal-400 via-white to-purple-400 bg-clip-text text-transparent">
               交流与支持
             </h2>
-            <p class="text-slate-400">
-              项目完全开源，如果你喜欢这个工具，欢迎通过以下方式与我交流或提供支持。
-            </p>
+            <p class="text-xs text-slate-500 uppercase tracking-[0.2em] font-bold">Connect & Support</p>
           </div>
 
-          <div class="flex flex-col items-center space-y-12">
-            <!-- Donation Section -->
-            <div class="flex flex-col items-center gap-8">
+          <div class="flex flex-col md:flex-row items-center justify-center gap-6 w-full max-w-3xl">
+            <!-- Support Button -->
+            <button 
+              @click="showDonation = true"
+              class="flex-1 w-full md:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-slate-800/40 hover:bg-slate-700/60 transition-all border border-slate-700 hover:border-pink-500/30 group"
+            >
+              <span class="text-xl group-hover:rotate-12 transition-transform">☕</span>
+              <span class="font-bold text-slate-200">请作者喝杯咖啡</span>
+            </button>
+
+            <!-- GitHub Follow -->
+            <a 
+              href="https://github.com/liu-ziting" 
+              target="_blank" 
+              class="flex-1 w-full md:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-slate-800/40 hover:bg-slate-700/60 transition-all border border-slate-700 hover:border-teal-500/30 group"
+            >
+              <svg class="h-5 w-5 text-slate-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              <span class="font-bold text-slate-200">GitHub Follow</span>
+            </a>
+          </div>
+
+          <div class="flex flex-col items-center gap-2">
+            <p class="text-[10px] text-slate-600 font-mono tracking-widest uppercase">Contact: lztziting0629 (WeChat)</p>
+            <div class="h-px w-12 bg-gradient-to-r from-transparent via-slate-800 to-transparent"></div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Donation Modal -->
+      <Teleport to="body">
+        <div 
+          v-if="showDonation" 
+          class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        >
+          <!-- Backdrop -->
+          <div 
+            class="absolute inset-0 bg-slate-950/80 backdrop-blur-md animate__animated animate__fadeIn"
+            @click="showDonation = false"
+          ></div>
+          
+          <!-- Modal Content -->
+          <div class="relative z-10 w-full max-w-sm glass bg-slate-900/90 border border-slate-800 rounded-[2.5rem] p-8 shadow-2xl animate__animated animate__zoomIn animate__faster">
+            <button 
+              @click="showDonation = false"
+              class="absolute top-6 right-6 text-slate-500 hover:text-white transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div class="text-center space-y-6">
+              <div class="space-y-2">
+                <h3 class="text-xl font-bold text-white">支持作者</h3>
+                <p class="text-xs text-slate-400">扫码请作者喝杯热咖啡吧 ☕</p>
+              </div>
+
               <div class="relative group">
-                <div class="absolute -inset-1 bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-60 transition duration-1000"></div>
-                <div class="relative bg-white p-6 md:p-8 rounded-[2rem] shadow-2xl">
-                  <img :src="dsImage" alt="Donation" class="w-56 h-56 md:w-72 md:h-72 object-contain" />
-                  <div class="absolute top-0 left-0 w-full h-1 bg-pink-400/30 blur-sm animate-[scan_3s_infinite]"></div>
+                <div class="absolute -inset-4 bg-gradient-to-tr from-pink-500/20 to-amber-500/20 blur-2xl rounded-full opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative bg-white p-4 rounded-3xl shadow-inner">
+                  <img :src="dsImage" alt="Donation" class="w-full h-auto rounded-xl" />
+                  <!-- Scan Effect -->
+                  <div class="absolute inset-x-4 top-4 h-1 bg-gradient-to-r from-transparent via-pink-500 to-transparent opacity-50 blur-[1px] [animation:scan_modal_2s_linear_infinite]"></div>
                 </div>
               </div>
-              
-              <div class="text-center space-y-3">
-                <h3 class="text-2xl font-black text-white flex items-center justify-center gap-3">
-                  <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></span>
-                  赞赏支持
-                </h3>
-                <p class="text-slate-400 max-w-sm">
-                  如果你觉得这个工具对你有帮助，欢迎请作者喝杯咖啡，支持后续的维护与开发。
-                </p>
-              </div>
-            </div>
 
-            <!-- GitHub Follow & Contact -->
-            <div class="flex flex-col items-center gap-6 pt-4 w-full">
-              <div class="h-px w-24 bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
-              <div class="flex flex-col sm:flex-row items-center gap-4">
-                <a href="https://github.com/liu-ziting" target="_blank" class="flex items-center gap-3 px-8 py-4 rounded-2xl bg-slate-800/50 hover:bg-slate-700 transition-all border border-slate-700 hover:border-pink-500/50 group">
-                  <svg class="h-6 w-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                  <span class="font-bold text-lg text-slate-200">在 GitHub 上关注我</span>
-                </a>
-              </div>
-              <p class="text-[10px] text-slate-600 font-mono">WeChat ID: lztziting0629</p>
+              <p class="text-[10px] text-slate-500 font-mono italic">
+                感谢您的每一分支持，这将帮助项目持续运行
+              </p>
             </div>
           </div>
         </div>
-      </section>
+      </Teleport>
 
       <footer class="text-center pt-12 border-t border-slate-800 text-slate-500 text-xs space-y-2">
         <p>© 2025 GitHub Trace Soul. Built with ❤️ for Developers.</p>
@@ -210,5 +249,11 @@ defineEmits<{
     50% { opacity: 1; }
     100% { transform: translateY(352px); opacity: 0; }
   }
+}
+
+@keyframes scan_modal {
+  0% { transform: translateY(0); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(280px); opacity: 0; }
 }
 </style>
