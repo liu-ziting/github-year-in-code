@@ -7,6 +7,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
+    "plugins": [{ "name": "@vue/typescript-plugin" }],
 
     /* Linting */
     "strict": true,
