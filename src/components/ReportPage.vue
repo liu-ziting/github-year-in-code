@@ -322,12 +322,21 @@
     </div>
 
       <!-- Footer -->
-      <div class="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center opacity-30 gap-4">
+      <div class="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center opacity-50 gap-4">
         <div class="flex flex-col items-center md:items-start gap-1">
           <p class="text-[8px] font-mono tracking-widest uppercase text-center md:text-left">Power by Xiaomi Mimo-v2 & GitHub Trace Engine</p>
-          <a href="https://github.com/liu-ziting/" target="_blank" class="text-[8px] font-mono tracking-widest uppercase hover:text-white transition-colors border-b border-transparent hover:border-white/40">By github-year-in-code.lz-t.top</a>
+          <div class="flex items-center gap-2">
+            <p class="text-[8px] font-mono tracking-widest uppercase">Build yours at:</p>
+            <a href="https://github2025.lz-t.top/" target="_blank" class="text-[10px] font-bold font-mono tracking-widest hover:text-white transition-colors border-b border-white/20">https://github2025.lz-t.top/</a>
+          </div>
         </div>
-        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" crossorigin="anonymous" class="w-4 h-4 invert" alt="GitHub">
+        <div class="flex items-center gap-3">
+          <div class="hidden md:block text-right">
+            <p class="text-[8px] font-mono tracking-widest uppercase">Verified Report</p>
+            <p class="text-[8px] font-mono tracking-widest uppercase">2025 Edition</p>
+          </div>
+          <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" crossorigin="anonymous" class="w-5 h-5 invert" alt="GitHub">
+        </div>
       </div>
     </div>
   </div>
