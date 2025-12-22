@@ -143,9 +143,10 @@ const startAnalysis = async (username: string) => {
         const starRepo = [...repos2025].sort((a, b) => b.stargazers_count - a.stargazers_count)[0] || null
         const collaborationRepo = [...repos2025].sort((a, b) => b.forks_count - a.forks_count)[0] || null
 
-        // 计算额外统计数据
-        const totalContributions = Math.floor(300 + Math.random() * 500) // 模拟贡献数
-        const longestStreak = Math.floor(5 + Math.random() * 25) // 模拟最长连击
+        // 计算额外统计数据 (基于现有数据进行更合理的模拟)
+        const baseContributions = originalRepos.length * 15 + user.followers * 5
+        const totalContributions = Math.floor(baseContributions * (0.8 + Math.random() * 0.4)) || Math.floor(100 + Math.random() * 200)
+        const longestStreak = Math.floor(Math.min(365, (totalContributions / 10) * (0.5 + Math.random())))
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
         // 基于 2025 仓库更新频率计算最活跃月份
@@ -164,25 +165,33 @@ const startAnalysis = async (username: string) => {
         const highCommitRepo = repos2025.length > 0 ? repos2025[Math.floor(Math.random() * repos2025.length)] : null
         const highCommitCount = Math.floor(totalContributions * (0.3 + Math.random() * 0.4))
 
-        // 头衔判断
-        let rank = '技术流浪者'
-        if (totalStars > 500) rank = '恒星架构师'
+        // 头衔判断 (Rank System)
+        let rank = '比特修行者'
+        if (totalStars > 1000 && user.followers > 100) rank = '宇宙级开发者'
+        else if (totalStars > 500) rank = '星系守护者'
+        else if (user.followers > 100) rank = '开源布道师'
         else if (totalStars > 100) rank = '深空漫步者'
-        else if (user.followers > 50) rank = '灵感传道士'
+        else if (originalRepos.length > 50 && totalStars < 20) rank = '高产搬砖工'
+        else if (user.followers > 20) rank = '灵感探险家'
+        else if (totalStars > 10) rank = '潜力新星'
 
         // 码龄计算 (Open Source Seniority)
         const createdDate = new Date(user.created_at)
         const now = new Date()
         const diffTime = Math.abs(now.getTime() - createdDate.getTime())
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-        const techImpact = `${diffDays} days`
+        const techImpact = diffDays > 365 ? `${(diffDays / 365).toFixed(1)} years` : `${diffDays} days`
 
-        // Power Level 计算
-        let powerLevel = 'Rookie'
-        if (totalStars > 1000 && user.followers > 100) powerLevel = 'Legend'
-        else if (totalStars > 500 || user.followers > 50) powerLevel = 'Ninja'
-        else if (totalStars > 100 || user.followers > 20) powerLevel = 'Warrior'
-        else if (totalStars > 10 || user.followers > 5) powerLevel = 'Fighter'
+        // Power Level 计算 (战力等级)
+        let powerLevel = 'E (Rookie)'
+        const score = totalStars * 5 + user.followers * 10 + originalRepos.length * 2
+        if (score > 5000) powerLevel = 'SSS (Godly)'
+        else if (score > 2000) powerLevel = 'SS (Legendary)'
+        else if (score > 1000) powerLevel = 'S (Elite)'
+        else if (score > 500) powerLevel = 'A (Professional)'
+        else if (score > 200) powerLevel = 'B (Active)'
+        else if (score > 50) powerLevel = 'C (Novice)'
+        else powerLevel = 'D (Fighter)'
 
         // 设置用户数据
         userData.value = {
