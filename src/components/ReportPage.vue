@@ -174,7 +174,7 @@
                 </div>
 
                 <!-- 2025 GitHub 之最 -->
-                <div class="glass p-4 md:p-6 bg-slate-900/30 border border-white/5">
+                <div v-if="false" class="glass p-4 md:p-6 bg-slate-900/30 border border-white/5">
                     <div class="flex items-center gap-3 mb-6">
                         <span class="text-xl md:text-2xl">🏆</span>
                         <div>
