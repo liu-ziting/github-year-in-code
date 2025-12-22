@@ -152,7 +152,10 @@ const startAnalysis = async (username: string) => {
         const activeMonths2025 = repos2025.map(r => new Date(r.updated_at).getMonth())
         const monthCounts: Record<number, number> = {}
         activeMonths2025.forEach(m => (monthCounts[m] = (monthCounts[m] || 0) + 1))
-        const mostActiveMonthIndex = activeMonths2025.length > 0 ? Number(Object.entries(monthCounts).sort((a, b) => b[1] - a[1])[0][0]) : Math.floor(Math.random() * 12)
+
+        const sortedMonths = Object.entries(monthCounts).sort((a, b) => b[1] - a[1])
+        const firstMonth = sortedMonths[0]
+        const mostActiveMonthIndex = firstMonth ? Number(firstMonth[0]) : Math.floor(Math.random() * 12)
 
         const mostActiveMonth = months[mostActiveMonthIndex]
         const mostActiveDay = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][Math.floor(Math.random() * 7)]
@@ -222,11 +225,7 @@ const startAnalysis = async (username: string) => {
             topLangs: languageStats.map(l => l.label)
         }
 
-        const [analysis, critique, tagsStr] = await Promise.all([
-            callMimoAI('analysis', aiInputData),
-            callMimoAI('critique', aiInputData),
-            callMimoAI('tags', aiInputData)
-        ])
+        const [analysis, critique, tagsStr] = await Promise.all([callMimoAI('analysis', aiInputData), callMimoAI('critique', aiInputData), callMimoAI('tags', aiInputData)])
 
         const tags = tagsStr
             .replace(/[\[\]"]/g, '')
