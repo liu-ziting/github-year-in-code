@@ -117,12 +117,13 @@ const startAnalysis = async (username: string) => {
         }
 
         // 3. 数据处理
-        // 过滤掉 fork 的项目，并严格限制在 2025 年有活跃（更新）的项目
+        // 过滤掉 fork 的项目，并严格限制在 2025 年有活跃（更新或推送）的项目
         const originalRepos = repos.filter(r => !r.fork)
         const repos2025 = originalRepos.filter(r => {
             const updatedAt = new Date(r.updated_at).getFullYear()
+            const pushedAt = r.pushed_at ? new Date(r.pushed_at).getFullYear() : 0
             const createdAt = new Date(r.created_at).getFullYear()
-            return updatedAt === 2025 || createdAt === 2025
+            return updatedAt === 2025 || pushedAt === 2025 || createdAt === 2025
         })
 
         // 统计数据仅针对 2025 年活跃的项目
@@ -148,27 +149,81 @@ const startAnalysis = async (username: string) => {
         const starRepo = [...repos2025].sort((a, b) => b.stargazers_count - a.stargazers_count)[0] || null
         const collaborationRepo = [...repos2025].sort((a, b) => b.forks_count - a.forks_count)[0] || null
 
-        // 计算额外统计数据 (基于 2025 活跃项目进行模拟)
-        const baseContributions = repos2025.length * 20 + user.followers * 2
-        const totalContributions = Math.floor(baseContributions * (0.8 + Math.random() * 0.4)) || Math.floor(50 + Math.random() * 100)
-        const longestStreak = Math.floor(Math.min(365, (totalContributions / 8) * (0.5 + Math.random())))
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        // --- 2025 真实贡献数据获取 ---
+        let totalContributions = 0
+        let longestStreak = 0
+        let mostActiveMonth = 'Jan'
+        let mostActiveDay = 'Monday'
+        let contributionData: { date: string; count: number }[] = []
 
-        // 基于 2025 仓库更新频率计算最活跃月份
-        const activeMonths2025 = repos2025.map(r => new Date(r.updated_at).getMonth())
-        const monthCounts: Record<number, number> = {}
-        activeMonths2025.forEach(m => (monthCounts[m] = (monthCounts[m] || 0) + 1))
+        try {
+            // 尝试获取真实的贡献数据
+            const contribRes = await fetch(`https://github-contributions-api.deno.dev/${username}.json`)
+            if (contribRes.ok) {
+                const data = await contribRes.json()
+                // 过滤 2025 年的数据
+                contributionData = data.contributions.filter((c: any) => c.date.startsWith('2025'))
 
-        const sortedMonths = Object.entries(monthCounts).sort((a, b) => b[1] - a[1])
-        const firstMonth = sortedMonths[0]
-        const mostActiveMonthIndex = firstMonth ? Number(firstMonth[0]) : Math.floor(Math.random() * 12)
+                totalContributions = contributionData.reduce((sum, c) => sum + c.count, 0)
 
-        const mostActiveMonth = months[mostActiveMonthIndex]
-        const mostActiveDay = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][Math.floor(Math.random() * 7)]
+                // 计算最长连续贡献
+                let currentStreak = 0
+                contributionData.forEach(c => {
+                    if (c.count > 0) {
+                        currentStreak++
+                        if (currentStreak > longestStreak) longestStreak = currentStreak
+                    } else {
+                        currentStreak = 0
+                    }
+                })
 
-        // 2025 高产项目模拟
-        const highCommitRepo = repos2025.length > 0 ? repos2025[Math.floor(Math.random() * repos2025.length)] : null
-        const highCommitCount = Math.floor(totalContributions * (0.3 + Math.random() * 0.4))
+                // 计算最活跃月份
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                const monthContributions: Record<number, number> = {}
+                contributionData.forEach(c => {
+                    const m = new Date(c.date).getMonth()
+                    monthContributions[m] = (monthContributions[m] || 0) + c.count
+                })
+                const topMonth = Object.entries(monthContributions).sort((a, b) => b[1] - a[1])[0]
+                if (topMonth) mostActiveMonth = months[Number(topMonth[0])]
+
+                // 计算最活跃的一天
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+                const dayContributions: Record<number, number> = {}
+                contributionData.forEach(c => {
+                    const d = new Date(c.date).getDay()
+                    dayContributions[d] = (dayContributions[d] || 0) + c.count
+                })
+                const topDay = Object.entries(dayContributions).sort((a, b) => b[1] - a[1])[0]
+                if (topDay) mostActiveDay = days[Number(topDay[0])]
+            }
+        } catch (e) {
+            console.warn('Failed to fetch real contribution data, falling back to deterministic simulation', e)
+        }
+
+        // 如果获取失败，使用确定性模拟 (基于用户名，不再随机)
+        const seed = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+        const deterministicValue = (offset: number, max: number) => {
+            const val = Math.abs(Math.sin(seed + offset) * 10000)
+            return Math.floor((val - Math.floor(val)) * max)
+        }
+
+        if (totalContributions === 0) {
+            const base = repos2025.length * 15 + user.followers * 2
+            totalContributions = Math.floor(base * (0.8 + deterministicValue(1, 40) / 100)) || 20 + deterministicValue(2, 50)
+            longestStreak = Math.floor(Math.min(30, (totalContributions / 10) * (0.5 + deterministicValue(3, 50) / 100))) || deterministicValue(4, 10)
+
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            mostActiveMonth = months[deterministicValue(5, 12)]
+            mostActiveDay = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][deterministicValue(6, 7)]
+        }
+
+        // 2025 高产项目模拟 (确定性)
+        const highCommitRepo = repos2025.length > 0 ? repos2025[deterministicValue(7, repos2025.length)] : null
+        const highCommitCount = Math.floor(totalContributions * (0.2 + deterministicValue(8, 30) / 100))
+
+        // 报告 ID (确定性)
+        const reportId = 1000 + deterministicValue(9, 9000)
 
         // 头衔判断 (Rank System) - 基于 2025 表现
         let rank = '潜行者'
@@ -248,14 +303,14 @@ const startAnalysis = async (username: string) => {
             longestStreak,
             mostActiveMonth,
             mostActiveDay,
-            reportId: Math.floor(1000 + Math.random() * 9000),
+            reportId,
             heatmapUrl: `/api/ghchart/8b5cf6/${username}`,
             starRepoName: starRepo?.name || 'N/A',
             starRepoStars: starRepo?.stargazers_count || 0,
             highCommitRepoName: highCommitRepo?.name || 'N/A',
             highCommitRepoCount: highCommitCount,
             highContributorRepoName: collaborationRepo?.name || 'N/A',
-            highContributorRepoCount: (collaborationRepo?.forks_count || 0) + Math.floor(Math.random() * 10),
+            highContributorRepoCount: (collaborationRepo?.forks_count || 0) + deterministicValue(10, 15),
             languageStats,
             starDistribution
         }
