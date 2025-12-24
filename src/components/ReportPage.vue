@@ -363,13 +363,13 @@
                             <div
                                 v-for="tag in aiContent.tags"
                                 :key="tag"
-                                class="px-3 py-1 bg-gradient-to-r from-teal-500/20 to-indigo-500/20 border border-teal-500/30 rounded-full text-xs font-bold text-teal-300 hover:scale-105 transition-transform"
+                                class="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-teal-500/20 to-indigo-500/20 border border-teal-500/30 rounded-full text-[10px] md:text-xs font-bold text-teal-300 whitespace-nowrap shadow-sm leading-none"
                             >
                                 {{ tag }}
                             </div>
                             <div
                                 v-if="!aiContent.tags || aiContent.tags.length === 0"
-                                class="px-3 py-1 bg-gray-500/20 border border-gray-500/30 rounded-full text-xs text-gray-400"
+                                class="px-3 py-1.5 bg-gray-500/20 border border-gray-500/30 rounded-full text-xs text-gray-400 whitespace-nowrap"
                             >
                                 标签生成中...
                             </div>
